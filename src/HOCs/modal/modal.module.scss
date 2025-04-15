@@ -1,0 +1,55 @@
+@use 'src/styles/colors';
+
+.container-modal {
+  background: rgb(0, 0, 0, 0.5);
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content-div-modal {
+  padding-inline: 1rem;
+  padding-block: 1rem;
+  background-color: white;
+  border-radius: 1rem;
+  position: relative;
+  height: fit-content;
+}
+
+.x-close-icon {
+  width: 1.2rem;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  cursor: pointer;
+  color: rgb(0, 0, 0, 0.3);
+}
+
+.movile-top {
+  align-items: start;
+  padding-top: 2rem;
+}
+
+@media (min-width: 600px) and (max-width: 1199px) {
+  .movile-top {
+    align-items: center;
+    padding-top: 0;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1919px) {
+  .movile-top {
+    align-items: center;
+    padding-top: 0;
+  }
+}
+@media (min-width: 1920px) {
+  .movile-top {
+    align-items: center;
+    padding-top: 0;
+  }
+}

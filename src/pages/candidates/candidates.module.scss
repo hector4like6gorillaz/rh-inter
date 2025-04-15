@@ -1,0 +1,16 @@
+.candidates-container-module {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+.buttons-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.buttons-mini-div {
+  display: flex;
+  column-gap: 1rem;
+}

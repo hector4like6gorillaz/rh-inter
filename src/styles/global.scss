@@ -6,30 +6,31 @@ body {
 }
 
 * {
-  box-sizing: border-box !important; 
+  box-sizing: border-box !important;
 }
 
 @font-face {
   font-family: 'MuseoSansBold';
-  src: local('MuseoSansBold'),
+  src:
+    local('MuseoSansBold'),
     url('../assets/fonts/MuseoSans-700.ttf') format('TrueType');
   font-weight: 700;
 }
 @font-face {
   font-family: 'MuseoSansRegular';
-  src: local('MuseoSansRegular'),
+  src:
+    local('MuseoSansRegular'),
     url('../assets/fonts/MuseoSans_500.otf') format('OpenType');
   font-weight: 500;
 }
 
 @font-face {
   font-family: 'MuseoSansLight';
-  src: local('MuseoSansLight'),
+  src:
+    local('MuseoSansLight'),
     url('../assets/fonts/Museo-300.otf') format('OpenType');
   font-weight: 300;
 }
-
-
 
 * {
   font-family: 'MuseoSansRegular';
@@ -64,7 +65,7 @@ button {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: colors.$terciary_600;
+  background: colors.$primary_300;
   border-radius: 20px;
 }
 
@@ -101,4 +102,9 @@ td {
 
 .ListTitles {
   color: colors.$primary_200;
+}
+
+.ant-btn-primary {
+  background-color: colors.$primary_300;
+  border-color: colors.$primary_300;
 }
