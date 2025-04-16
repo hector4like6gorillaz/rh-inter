@@ -2,15 +2,17 @@ import axios, { AxiosInstance } from 'axios'
 
 const isAuthenticated = () => false
 
+export const tokenName = import.meta.env.VITE_APP_TOKENNAME
+
 const environmentIsDev =
   window.location.href.includes('develop') || window.location.href.includes('localhost')
 
 let baseURL: any = environmentIsDev
-  ? import.meta.env.VITE_APP_API
+  ? import.meta.env.VITE_APP_API_KHOR
   : import.meta.env.VITE_APP_API_PROD
 
 const getTokenData = (): string | null => {
-  return sessionStorage.getItem('ezeteraToken')
+  return sessionStorage.getItem(tokenName)
 }
 const headers = {
   'Content-Type': 'application/json; charset=utf-8',

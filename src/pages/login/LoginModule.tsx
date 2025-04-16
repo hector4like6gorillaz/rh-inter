@@ -3,10 +3,10 @@ import style from './login.module.scss'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 
 import logo from 'src/assets/logo.png'
-
+import useLogin from 'src/hooks/useLogin'
 
 const LoginModule = () => {
-
+  const { loading, handlePostLoginKhorService } = useLogin()
   return (
     <MainLayout padding={false} showLeftPanel={false} showNavBar={false}>
       <div className={`${style['container-login']}`}>
@@ -16,7 +16,8 @@ const LoginModule = () => {
           theme='filled_blue'
           width={1000}
           onSuccess={(data: CredentialResponse) => {
-            //()=>handlePatchLogin()
+            console.log(data)
+            handlePostLoginKhorService()
           }}
           onError={() => console.log('Login failed')}
         />

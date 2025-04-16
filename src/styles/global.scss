@@ -108,3 +108,28 @@ td {
   background-color: colors.$primary_300;
   border-color: colors.$primary_300;
 }
+//----
+
+.ant-table {
+  background-color: colors.$primary_300;
+  color: white;
+}
+
+.ant-table-thead > tr > th {
+  background-color: colors.$primary_300 !important;
+  color: white !important;
+}
+
+.ant-table-tbody > tr > td {
+  color: white;
+}
+
+.ant-float-btn {
+  background-color: colors.$primary_300 !important;
+  box-shadow: none;
+}
+
+.ant-float-btn .ant-float-btn-body {
+  background-color: colors.$primary_300 !important;
+  color: white !important;
+}

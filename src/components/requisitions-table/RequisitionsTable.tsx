@@ -1,21 +1,11 @@
 import { Table } from 'antd'
 import Search from 'antd/es/input/Search'
-import React, { Fragment } from 'react'
 import style from './requisitions.module.scss'
 import useReqisitions from 'src/hooks/useReqisitions'
+import { XCircleIcon } from '@heroicons/react/24/outline'
 
 const RequisitionsTable = () => {
-  const {
-    columns,
-    requisitionsCopyElements,
-    loading,
-    pagination,
-    getNextPrevPageInventary,
-    pageCurrent,
-    handleSearch,
-    navigate,
-    filterSearch,
-  } = useReqisitions()
+  const { search, columns, requisitionsCopyElements, handleSearch, filterSearch } = useReqisitions()
   return (
     <div className={`${style['requisitions-div-container']}`}>
       <Search
@@ -25,6 +15,18 @@ const RequisitionsTable = () => {
         loading={false}
         onChange={(e) => handleSearch(e.target.value)}
         onSearch={filterSearch}
+        value={search}
+        suffix={
+          <XCircleIcon
+            onClick={() => search !== '' && handleSearch('')}
+            style={{
+              cursor: search !== '' ? 'pointer' : 'default',
+              opacity: search !== '' ? 1 : 0,
+              width: '2rem',
+              stroke: '#039ecc',
+            }}
+          />
+        }
       />
       <div style={{ width: '100%', overflow: 'auto' }}>
         <Table
@@ -34,26 +36,10 @@ const RequisitionsTable = () => {
           scroll={{ x: 'max-content' }}
           rowKey={'idOferta'}
           pagination={{
-            //simple: isMovile,
-            //current: pageCurrent,
             showSizeChanger: false,
-            total: pagination?.totalItems,
-            onChange: (page: number, _pageSize: number) => {
-              //getNextPrevPageInventary({ page, save: true })
-            },
           }}
         />
       </div>
-      {/*
-      {pagination !== null && (
-        <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-          <P>
-            Results {pagination?.currentPage} to {pagination?.currentPage * pagination?.perPage} of{' '}
-            {pagination.totalItems}
-          </P>
-        </div>
-      )}
-              */}
     </div>
   )
 }
