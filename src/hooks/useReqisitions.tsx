@@ -1,32 +1,29 @@
-import { ClipboardDocumentIcon } from '@heroicons/react/24/solid'
 import { Tooltip } from 'antd'
-import React, { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
+import { initRequisitions } from 'src/constants/requisitions-constants'
 import { IRequisition } from 'src/interfaces/requisitions-interfaces'
 import { formatTimestamp } from 'src/utilities/timestamp-to-date.utilities'
 import { notifyError } from 'src/utilities/toastify.utilities'
+import { normalizeText } from 'src/utilities/words-utilities'
+import { timer, Subscription } from 'rxjs'
+import { EyeIcon } from '@heroicons/react/24/outline'
 
 const useReqisitions = () => {
   const hasFetched = useRef(false)
   const navigate = useNavigate()
-  const [requisitionstElements, setRequisitionsElements] = useState<IRequisition[]>([])
-  const [requisitionsCopyElements, setrequisitionsCopyElements] = useState<IRequisition[]>([])
+  const [requisitionstElements, setRequisitionsElements] =
+    useState<IRequisition[]>(initRequisitions)
+  const [requisitionsCopyElements, setrequisitionsCopyElements] =
+    useState<IRequisition[]>(initRequisitions)
   const [loading, setloading] = useState(false)
-  const [pagination, setpagination] = useState<any | null>(null)
-  const [pageCurrent, setpageCurrent] = useState(1)
   const [search, setsearch] = useState('')
 
-  const getNextPrevPageInventary = async ({
-    page,
-    save = false,
-  }: {
-    page: number
-    save?: boolean
-  }) => {
+  const getNextPrevPageInventary = async ({ save = false }: { save?: boolean }) => {
     try {
       setloading(true)
-      setpageCurrent(page)
+
       //const dat = await getPokemonById({ page, search }) // esperar la promesa
       const dat = 2
       return dat
@@ -43,34 +40,36 @@ const useReqisitions = () => {
       setloading(false)
     }
   }
+
   const handleSearch = (search: string) => {
     setsearch(search)
   }
+
   const filterSearch = () => {
     let searched: IRequisition[] = []
 
     if (search !== '' && requisitionstElements.length !== 0) {
-      /*
       const normalizedSearch = normalizeText(search)
-      
+
       searched = [
         ...requisitionstElements.filter((el) => normalizeText(el.lider).includes(normalizedSearch)),
         ...requisitionstElements.filter((el) =>
-        normalizeText(el.puestoACubrir).includes(normalizedSearch),
-      ),
-      ...requisitionstElements.filter((el) =>
-      normalizeText(el.solicitante).includes(normalizedSearch),
-    ),
-    ...requisitionstElements.filter((el) =>
-    normalizeText(el.relacionAreas).includes(normalizedSearch),
-  ),
-]
+          normalizeText(el.puestoACubrir).includes(normalizedSearch),
+        ),
+        ...requisitionstElements.filter((el) =>
+          normalizeText(el.solicitante).includes(normalizedSearch),
+        ),
+        ...requisitionstElements.filter((el) =>
+          normalizeText(el.relacionAreas).includes(normalizedSearch),
+        ),
+      ]
 
-*/
       searched = [...new Set(searched)]
+      setrequisitionsCopyElements(searched)
       console.log(searched)
     }
   }
+
   const columns = [
     {
       title: 'Ver candidatos',
@@ -81,7 +80,7 @@ const useReqisitions = () => {
             return (
               <div style={{ display: 'flex', justifyContent: 'center', columnGap: '1rem' }}>
                 <Tooltip title='Editar producto'>
-                  <ClipboardDocumentIcon
+                  <EyeIcon
                     style={{
                       width: '1.5rem',
                       height: '1.5rem',
@@ -91,7 +90,7 @@ const useReqisitions = () => {
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
-                      navigate('/inventary/add-product', { state: { producto: record } })
+                      navigate('/candidates', { state: { requisition: record } })
                     }}
                   />
                 </Tooltip>
@@ -143,6 +142,23 @@ const useReqisitions = () => {
       ),
     },
   ]
+
+  useEffect(() => {
+    let subscription: Subscription
+
+    if (search === '') {
+      subscription = timer(1000).subscribe(() => {
+        setrequisitionsCopyElements(requisitionstElements)
+      })
+    }
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe()
+      }
+    }
+  }, [search])
+
   return {
     //global variables
 
@@ -150,13 +166,10 @@ const useReqisitions = () => {
     columns,
     requisitionsCopyElements,
     loading,
-    pagination,
-    pageCurrent,
-
+    search,
     //local functions
     getNextPrevPageInventary,
     handleSearch,
-    navigate,
     filterSearch,
   }
 }

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { useLocation } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
 import MainLayout from 'src/HOCs/MainLayout/MainLayout'
@@ -8,9 +8,13 @@ const FullDescriptionModule = () => {
   const { fullDescription } = location.state || {}
 
   return (
-    <MainLayout showLeftPanel={false}>
+    <MainLayout
+      showLeftPanel={false}
+      tabTitle='Inter - Descripción completa'
+      titleNavBar='Descripción completa del puesto'
+    >
       <Fragment>
-        <P>{fullDescription}</P>
+        <P size='big'>{fullDescription}</P>
       </Fragment>
     </MainLayout>
   )

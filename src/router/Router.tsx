@@ -10,6 +10,7 @@ import PdfVisualizerModule from 'src/pages/pdf-visualizer/PdfVisualizerModule'
 import FullDescriptionModule from 'src/pages/full-description/FullDescriptionModule'
 import RequisitionsModule from 'src/pages/requisitions/RequisitionsModule'
 import CandidatesModule from 'src/pages/candidates/CandidatesModule'
+import PsicometricModule from 'src/pages/psicometric/PsicometricModule'
 
 const Router = () => {
   return (
@@ -24,6 +25,7 @@ const Router = () => {
             <Route path='/candidates' element={<CandidatesModule />} />
             <Route path='/pdf-visualizer' element={<PdfVisualizerModule />} />
             <Route path='/full-description' element={<FullDescriptionModule />} />
+            <Route path='/psicometric' element={<PsicometricModule />} />
           </Route>
           <Route element={<PrivateRoute />}>
             <Route path='/user' element={<LandingModule />} />
