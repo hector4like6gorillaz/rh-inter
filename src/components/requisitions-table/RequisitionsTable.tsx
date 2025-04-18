@@ -33,7 +33,7 @@ const RequisitionsTable = () => {
           dataSource={requisitionsCopyElements}
           columns={columns}
           loading={false}
-          scroll={{ x: 'max-content' }}
+        //  scroll={{ x: 'max-content' }}
           rowKey={'idOferta'}
           pagination={{
             showSizeChanger: false,

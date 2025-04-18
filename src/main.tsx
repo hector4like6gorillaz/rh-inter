@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from './redux/store/index.ts'
 import Router from './router/Router.tsx'
 import './styles/global.scss'
+import '@ant-design/v5-patch-for-react-19'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ToastContainer } from 'react-toastify'
 

@@ -11,6 +11,7 @@ import FullDescriptionModule from 'src/pages/full-description/FullDescriptionMod
 import RequisitionsModule from 'src/pages/requisitions/RequisitionsModule'
 import CandidatesModule from 'src/pages/candidates/CandidatesModule'
 import PsicometricModule from 'src/pages/psicometric/PsicometricModule'
+import CuestionarieModule from 'src/pages/cuestionario/CuestionarieModule'
 
 const Router = () => {
   return (
@@ -26,6 +27,7 @@ const Router = () => {
             <Route path='/pdf-visualizer' element={<PdfVisualizerModule />} />
             <Route path='/full-description' element={<FullDescriptionModule />} />
             <Route path='/psicometric' element={<PsicometricModule />} />
+            <Route path='/cuestionarie' element={<CuestionarieModule />} />
           </Route>
           <Route element={<PrivateRoute />}>
             <Route path='/user' element={<LandingModule />} />

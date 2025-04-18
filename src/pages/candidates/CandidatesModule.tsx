@@ -57,7 +57,7 @@ const CandidatesModule = () => {
             >
               Descripción Completa
             </Button>
-            <Button size='large' type='primary'>
+            <Button size='large' type='primary' onClick={() => navigate('/cuestionarie')}>
               Cuestionario
             </Button>
             <Button size='large' type='primary' onClick={() => navigate('/psicometric')}>
