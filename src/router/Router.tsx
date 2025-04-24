@@ -12,6 +12,7 @@ import RequisitionsModule from 'src/pages/requisitions/RequisitionsModule'
 import CandidatesModule from 'src/pages/candidates/CandidatesModule'
 import PsicometricModule from 'src/pages/psicometric/PsicometricModule'
 import CuestionarieModule from 'src/pages/cuestionario/CuestionarieModule'
+import AddCandidateToRequisition from 'src/pages/add-candidate-to-requisition/AddCandidateToRequisition'
 
 const Router = () => {
   return (
@@ -28,6 +29,7 @@ const Router = () => {
             <Route path='/full-description' element={<FullDescriptionModule />} />
             <Route path='/psicometric' element={<PsicometricModule />} />
             <Route path='/cuestionarie' element={<CuestionarieModule />} />
+            <Route path='/add-candidate-to-requisition' element={<AddCandidateToRequisition />} />
           </Route>
           <Route element={<PrivateRoute />}>
             <Route path='/user' element={<LandingModule />} />

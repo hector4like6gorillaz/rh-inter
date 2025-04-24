@@ -1,6 +1,6 @@
-import { IRequisition } from 'src/interfaces/requisitions-interfaces'
+import { IRequisitionKhor } from 'src/interfaces/requisitions-interfaces'
 
-export const initRequisitions: IRequisition[] = [
+export const initRequisitions: IRequisitionKhor[] = [
   {
     idOferta: 4392,
     folioRequisicion: 3371,

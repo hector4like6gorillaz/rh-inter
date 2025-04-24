@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
 import { initRequisitions } from 'src/constants/requisitions-constants'
-import { IRequisition } from 'src/interfaces/requisitions-interfaces'
+import { IRequisitionKhor } from 'src/interfaces/requisitions-interfaces'
 import { formatTimestamp } from 'src/utilities/timestamp-to-date.utilities'
 import { notifyError } from 'src/utilities/toastify.utilities'
 import { normalizeText } from 'src/utilities/words-utilities'
@@ -14,9 +14,9 @@ const useReqisitions = () => {
   const hasFetched = useRef(false)
   const navigate = useNavigate()
   const [requisitionstElements, setRequisitionsElements] =
-    useState<IRequisition[]>(initRequisitions)
+    useState<IRequisitionKhor[]>(initRequisitions)
   const [requisitionsCopyElements, setrequisitionsCopyElements] =
-    useState<IRequisition[]>(initRequisitions)
+    useState<IRequisitionKhor[]>(initRequisitions)
   const [loading, setloading] = useState(false)
   const [search, setsearch] = useState('')
 
@@ -46,7 +46,7 @@ const useReqisitions = () => {
   }
 
   const filterSearch = () => {
-    let searched: IRequisition[] = []
+    let searched: IRequisitionKhor[] = []
 
     if (search !== '' && requisitionstElements.length !== 0) {
       const normalizedSearch = normalizeText(search)
@@ -74,7 +74,7 @@ const useReqisitions = () => {
     {
       title: 'Ver candidatos',
       key: 'unitOfMeasurement',
-      render: (_: any, record: any) => (
+      render: (_: any, record: IRequisitionKhor) => (
         <>
           {(() => {
             return (
@@ -90,7 +90,10 @@ const useReqisitions = () => {
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
-                      navigate('/candidates', { state: { requisition: record } })
+                      console.log(record)
+                      navigate('/candidates', {
+                        state: { requisition: record, idOferta: record.idOferta },
+                      })
                     }}
                   />
                 </Tooltip>
@@ -129,7 +132,7 @@ const useReqisitions = () => {
       title: 'Fecha',
       dataIndex: 'fechaCreacion',
 
-      render: (_: any, record: IRequisition) => (
+      render: (_: any, record: IRequisitionKhor) => (
         <>
           {(() => {
             return (

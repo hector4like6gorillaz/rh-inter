@@ -5,28 +5,37 @@ import MainLayout from 'src/HOCs/MainLayout/MainLayout'
 import useCuestionario from 'src/hooks/useCuestionario'
 
 const CuestionarieModule = () => {
-  const { columnsCuestionarie, questions, rowSelection, dataSource, columns } = useCuestionario()
+  const {
+    columnsCuestionarie,
+    puesto,
+    rowSelection,
+
+    columns,
+    cuestionaire,
+    candidatesNameEmailList,
+  } = useCuestionario()
   return (
     <MainLayout
       showLeftPanel={false}
-      tabTitle='Inter - Cuestionario de Gerente de contabilidad'
-      titleNavBar='Cuestionario de Gerente de contabilidad'
+      tabTitle={`Inter - Cuestionario de ${puesto}`}
+      titleNavBar={`Cuestionario de ${puesto}`}
     >
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '2rem' }}>
         <P size='big'>Preguntas del cuestionario</P>
-
-        <Table
-          dataSource={questions}
-          columns={columnsCuestionarie}
-          loading={false}
-          rowKey={'email'}
-          pagination={false}
-        />
+        {cuestionaire !== null && (
+          <Table
+            dataSource={cuestionaire}
+            columns={columnsCuestionarie}
+            loading={false}
+            rowKey={'email'}
+            pagination={false}
+          />
+        )}
         <P size='big'>Candidatos para envio del cuestionario:</P>
 
         <Table
           rowSelection={rowSelection}
-          dataSource={dataSource}
+          dataSource={candidatesNameEmailList ?? []}
           columns={columns}
           loading={false}
           scroll={{ x: 'max-content' }}
