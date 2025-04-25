@@ -1,5 +1,5 @@
 import { Tooltip } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
 import { initRequisitions } from 'src/constants/requisitions-constants'
@@ -11,7 +11,7 @@ import { timer, Subscription } from 'rxjs'
 import { EyeIcon } from '@heroicons/react/24/outline'
 
 const useReqisitions = () => {
-  const hasFetched = useRef(false)
+  //const hasFetched = useRef(false)
   const navigate = useNavigate()
   const [requisitionstElements, setRequisitionsElements] =
     useState<IRequisitionKhor[]>(initRequisitions)
@@ -21,6 +21,7 @@ const useReqisitions = () => {
   const [search, setsearch] = useState('')
 
   const getNextPrevPageInventary = async ({ save = false }: { save?: boolean }) => {
+    console.log(save)
     try {
       setloading(true)
 
@@ -145,6 +146,11 @@ const useReqisitions = () => {
       ),
     },
   ]
+  useEffect(() => {
+    setRequisitionsElements(initRequisitions)
+
+    return () => {}
+  }, [])
 
   useEffect(() => {
     let subscription: Subscription

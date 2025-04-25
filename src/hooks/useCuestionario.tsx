@@ -4,12 +4,16 @@ import { useLocation } from 'react-router-dom'
 
 import { ICandidate } from 'src/interfaces/candidates-interface'
 import { IExam } from 'src/interfaces/requisitions-interfaces'
+import { postSendEmailCuestionarie } from 'src/services/candidatos/cadidatos.services'
+import { catchError, defer, throwError } from 'rxjs'
+import { notify, notifyError } from 'src/utilities/toastify.utilities'
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection']
 
 const useCuestionario = () => {
   const location = useLocation()
   const { exam, candidates, idOferta, puesto } = location.state || {}
+  console.log(puesto)
 
   //console.log(exam, candidates, idOferta, puesto)
   const [loading, setloading] = useState(false)
@@ -32,8 +36,48 @@ const useCuestionario = () => {
     },
   ]
 
+  const postSendEmailCuestionarieService = () => {
+    setloading(true)
+    return defer(() =>
+      postSendEmailCuestionarie({
+        idOferta,
+        vacante: puesto,
+        candidatos: candidatesNameEmailList!
+          .filter((item) => selectedRowKeys.includes(item.email))
+          .map((item) => ({
+            nombre: item.name,
+            email: item.email,
+          })),
+      }).then((dat) => {
+        return dat
+      }),
+    ).pipe(
+      catchError((e) => {
+        return throwError(() => e)
+      }),
+    )
+  }
+
+  const handlePostCandidateToRequisitionService = () => {
+    postSendEmailCuestionarieService().subscribe({
+      next: () => {
+        notify('Correo(s) enviado(s) con exito')
+        setloading(false)
+      },
+      error: (e) => {
+        console.error('Error al ingresar al intentar mandar los correos:', e)
+        setloading(false)
+        if (e.status === 401) {
+          notifyError('La sesión ha caducado. Iniciar sesión nuevamente.')
+        } else {
+          notifyError(
+            'Ha ocurrido un error al intentar enviar los correos a los candidatos. Contactar con soporte.',
+          )
+        }
+      },
+    })
+  }
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -63,15 +107,22 @@ const useCuestionario = () => {
     loading,
     columnsCuestionarie,
     columns,
-
     hasSelected,
     selectedRowKeys,
     cuestionaire,
     puesto,
     candidatesNameEmailList,
-    //local functions
     rowSelection,
+    //local functions
+    handlePostCandidateToRequisitionService,
   }
 }
 
 export default useCuestionario
+
+/*
+{
+          "email": element.email,
+          "nombre": element.name,
+        }
+*/

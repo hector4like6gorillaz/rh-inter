@@ -24,6 +24,7 @@ const useCandidates = () => {
   const [loadinInitRequisition, setloadinInitRequisition] = useState(false)
 
   const [search, setsearch] = useState('')
+  console.log(search)
   const [resumenCandidato, setresumenCandidato] = useState('')
   const [candidateNameSelected, setcandidateNameSelected] = useState('')
   const [showModal, setshowModal] = useState(false)
@@ -44,6 +45,29 @@ const useCandidates = () => {
         return throwError(() => e)
       }),
     )
+  }
+
+  const handleGetRequisitionByIdWithCandidatesService = () => {
+    getRequisitionByIdWithCandidatesService().subscribe({
+      next: (requisitionData) => {
+        setrequisitionData(requisition)
+        setfullRequisition(requisitionData)
+        setCandidatesElements(
+          requisitionData.candidatosListFullData.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+              pdf: item.cvPublicURL,
+              cuestionario: 'sin resultado',
+              psicometrico: 'sin resultado',
+              summary: item.summary,
+            }
+          }),
+        )
+        setloading(false)
+      },
+      error: (error) => console.error('Error al refrescar directorio:', error),
+    })
   }
 
   const postRequisitionService = () => {
@@ -69,9 +93,10 @@ const useCandidates = () => {
   const handleRequisition = () => {
     postRequisitionService().subscribe({
       next: () => {
-        navigate(-1)
+        //navigate(-1)
         setloadinInitRequisition(false)
-        notify(`Requisición para '${requisition.puestoACubrir}' creada con exito`)
+        notify(`Requisición para '${requisition.puestoACubrir}' creada con exito. Cargando datos`)
+        handleGetRequisitionByIdWithCandidatesService()
       },
       error: (error) => console.error('Error al refrescar tags:', error),
     })

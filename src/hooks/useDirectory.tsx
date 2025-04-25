@@ -1,12 +1,11 @@
 import { DocumentMagnifyingGlassIcon, UserPlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Tooltip } from 'antd'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
 import {
   catchError,
   defer,
-  finalize,
   forkJoin,
   from,
   Subject,
@@ -16,12 +15,18 @@ import {
   timer,
 } from 'rxjs'
 import { notify, notifyError } from 'src/utilities/toastify.utilities'
-import { getCandidates, postPdfCv } from 'src/services/requisitions/requisitions.service'
+import {
+  getCandidates,
+  postCandidateToRequisition,
+  postPdfCv,
+} from 'src/services/requisitions/requisitions.service'
 import { ICandidate } from 'src/interfaces/candidates-interface'
 import { formatTimestamp } from 'src/utilities/timestamp-to-date.utilities'
 import { normalizeText } from 'src/utilities/words-utilities'
 
 const useDirectory = () => {
+  const location = useLocation()
+  const { idOferta, puesto } = location.state || {}
   const hasFetched = useRef(false)
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -29,7 +34,6 @@ const useDirectory = () => {
   const [candidatesElements, setcandidatesElements] = useState<ICandidate[]>([])
   const [addCandidateSelected, setaddCandidateSelected] = useState<ICandidate[]>([])
   const [filteredSearch, setfilteredSearch] = useState<ICandidate[]>([])
-  console.log(filteredSearch)
 
   const [loading, setloading] = useState(false)
   const [search, setsearch] = useState('')
@@ -359,6 +363,44 @@ const useDirectory = () => {
     })
   }
 
+  const postCandidateToRequisitionService = () => {
+    setloading(true)
+    return defer(() =>
+      postCandidateToRequisition({
+        idOferta,
+        uuid: addCandidateSelected.map((item) => {
+          return item.uuid
+        }),
+      }).then((dat) => {
+        return dat
+      }),
+    ).pipe(
+      catchError((e) => {
+        return throwError(() => e)
+      }),
+    )
+  }
+
+  const handlePostCandidateToRequisitionService = () => {
+    postCandidateToRequisitionService().subscribe({
+      next: () => {
+        notify('Candidato agregado con exito a la requisicion')
+        setloading(false)
+      },
+      error: (e) => {
+        console.error('Error al ingresar al candidato:', e)
+        setloading(false)
+        if (e.status === 401) {
+          notifyError('La sesión ha caducado. Iniciar sesión nuevamente.')
+        } else {
+          notifyError(
+            'Ha ocurrido un error al intentar agregar al candidato. Contactar con soporte.',
+          )
+        }
+      },
+    })
+  }
+
   useEffect(() => {
     if (hasFetched.current) return
 
@@ -398,18 +440,19 @@ const useDirectory = () => {
   }, [search])
 
   return {
-    //global variables
+    //global variables 445c8782-6580-4430-924a-9fe3f5f98d59
 
     //variables
     search,
     columns,
-    columnsAddCandidate,
     candidatesElements,
     filteredSearch,
     loading,
     addCandidateSelected,
     inputRef,
+    puesto,
     //local functions
+    columnsAddCandidate,
     getCandidatesDirectoryService,
     handleSearch,
     navigate,
@@ -418,6 +461,7 @@ const useDirectory = () => {
     restartFilter,
     handleFileChange,
     handlePostPdfService,
+    handlePostCandidateToRequisitionService,
   }
 }
 

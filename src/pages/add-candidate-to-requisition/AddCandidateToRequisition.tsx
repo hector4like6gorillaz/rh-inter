@@ -11,45 +11,48 @@ const AddCandidateToRequisition = () => {
     filteredSearch,
     search,
     loading,
+    puesto,
     columnsAddCandidate,
     handleSearch,
     doFilterSearch,
     restartFilter,
+    handlePostCandidateToRequisitionService,
   } = useDirectory()
+
   return (
     <MainLayout
       showLeftPanel={false}
       tabTitle='Inter - Añadir candidatos a requisición'
-      titleNavBar='Añadir candidatos a requisición'
+      titleNavBar={`Añadir candidatos a requisición: ${puesto}`}
     >
-      <div className={`${style['container-div-table']}`}>
-        <Search
-          placeholder='Buscar por empresa, nombre, últimos estudios, puesto actual o empresa actual'
-          enterButton='Buscar'
-          size='large'
-          loading={false}
-          onChange={(e) => handleSearch(e.target.value)}
-          onSearch={doFilterSearch}
-          value={search}
-          suffix={
-            <XCircleIcon
-              onClick={() => {
-                if (search !== '') {
-                  handleSearch('')
-                  restartFilter()
-                }
-              }}
-              style={{
-                cursor: search !== '' ? 'pointer' : 'default',
-                opacity: search !== '' ? 1 : 0,
-                width: '2rem',
-                stroke: '#039ecc',
-              }}
-            />
-          }
-        />
+      <Spin spinning={loading}>
+        <div className={`${style['container-div-table']}`}>
+          <Search
+            placeholder='Buscar por empresa, nombre, últimos estudios, puesto actual o empresa actual'
+            enterButton='Buscar'
+            size='large'
+            loading={false}
+            onChange={(e) => handleSearch(e.target.value)}
+            onSearch={doFilterSearch}
+            value={search}
+            suffix={
+              <XCircleIcon
+                onClick={() => {
+                  if (search !== '') {
+                    handleSearch('')
+                    restartFilter()
+                  }
+                }}
+                style={{
+                  cursor: search !== '' ? 'pointer' : 'default',
+                  opacity: search !== '' ? 1 : 0,
+                  width: '2rem',
+                  stroke: '#039ecc',
+                }}
+              />
+            }
+          />
 
-        <Spin spinning={loading}>
           <div className={`${style['container-div-table']}`}>
             <Table
               dataSource={filteredSearch}
@@ -61,6 +64,7 @@ const AddCandidateToRequisition = () => {
             />
             <div className={`${style['button-container']}`}>
               <Button
+                size='large'
                 disabled={addCandidateSelected.length === 0}
                 iconPosition='end'
                 icon={
@@ -74,6 +78,7 @@ const AddCandidateToRequisition = () => {
                   />
                 }
                 type='primary'
+                onClick={handlePostCandidateToRequisitionService}
               >
                 Añadir candidatos
               </Button>
@@ -87,8 +92,8 @@ const AddCandidateToRequisition = () => {
               }}
             />
           </div>
-        </Spin>
-      </div>
+        </div>
+      </Spin>
     </MainLayout>
   )
 }

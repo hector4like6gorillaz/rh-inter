@@ -1,5 +1,5 @@
 import style from './candidates.module.scss'
-import { Button, Skeleton, Spin } from 'antd'
+import { Button, Spin } from 'antd'
 import { Fragment } from 'react/jsx-runtime'
 
 import CandidatesTable from 'src/components/candidates-table/CandidatesTable'
@@ -18,15 +18,14 @@ const CandidatesModule = () => {
     showModal,
     candidateNameSelected,
     loading,
+    loadinInitRequisition,
     closeModal,
     navigate,
     handleRequisition,
-    loadinInitRequisition,
   } = useCandidates()
   return (
     <MainLayout
       tabTitle='Inter - Candidatos'
-      showLeftPanel={false}
       titleNavBar={
         requisitionData
           ? `Candidatos para  ${requisitionData?.puestoACubrir}`
@@ -96,7 +95,14 @@ const CandidatesModule = () => {
               <Button
                 size='large'
                 type='primary'
-                onClick={() => navigate('/add-candidate-to-requisition')}
+                onClick={() =>
+                  navigate('/add-candidate-to-requisition', {
+                    state: {
+                      idOferta: fullRequisition?.idOferta,
+                      puesto: requisitionData.puestoACubrir,
+                    },
+                  })
+                }
               >
                 Añadir Candidato
               </Button>

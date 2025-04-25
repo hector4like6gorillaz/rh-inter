@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tooltip, type TableColumnsType, type TableProps } from 'antd'
 import P from 'src/components/paragraph/P'
 
@@ -16,8 +16,7 @@ const usePsicometric = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys)
+    //console.log('selectedRowKeys changed: ', newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
@@ -58,7 +57,9 @@ const usePsicometric = () => {
     idOferta: 4392,
   }))
 
-  console.log(selectedRowKeys)
+  useEffect(() => {
+    setloading(false)
+  }, [])
 
   return {
     //local constants

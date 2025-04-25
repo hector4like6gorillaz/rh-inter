@@ -37,7 +37,23 @@ const postPdfCv = async ({ file }: { file: File }): Promise<any> => {
   const formData = new FormData()
   formData.append('file', file)
 
-  const results = await API.firebase.post(`rh-old-services/upload-cv`, formData)
+  const results = await API.firebase.post(`rh-old-services/upload-cv`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  const { data } = results
+  return data
+}
+const postCandidateToRequisition = async ({
+  idOferta,
+  uuid,
+}: {
+  idOferta: number
+  uuid: string[]
+}): Promise<any> => {
+  const body = { idOferta, uuid }
+  const results = await API.firebase.post(`agregar-candidato-a-requicicion`, body)
   const { data } = results
   return data
 }
@@ -48,4 +64,5 @@ export {
   getRequisitionByIdWithCandidates,
   postRequisition,
   postPdfCv,
+  postCandidateToRequisition,
 }

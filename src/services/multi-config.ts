@@ -12,13 +12,12 @@ const baseURLs: Record<APIName, string> = {
   firebase: import.meta.env.VITE_APP_API_FIRE,
 }
 
-const getInstance = (name: APIName, contentType: 'json' | 'form' = 'form'): AxiosInstance => {
+const getInstance = (name: APIName, contentType: 'json' | 'form' = 'json'): AxiosInstance => {
   const token = tokens[name]
-  const headers: any = {
-    'Content-Type':
-      contentType === 'json'
-        ? 'application/json; charset=utf-8'
-        : 'multipart/form-data; charset=utf-8',
+  const headers: any = {}
+
+  if (contentType === 'json') {
+    headers['Content-Type'] = 'application/json; charset=utf-8'
   }
   if (token) {
     headers.Authorization = `Bearer ${token}`

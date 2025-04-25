@@ -6,7 +6,7 @@ import logo from 'src/assets/logo.png'
 import useLogin from 'src/hooks/useLogin'
 
 const LoginModule = () => {
-  const { loading, handlePostLoginKhorService } = useLogin()
+  const { handlePostLoginKhorService } = useLogin()
   return (
     <MainLayout padding={false} showLeftPanel={false} showNavBar={false}>
       <div className={`${style['container-login']}`}>

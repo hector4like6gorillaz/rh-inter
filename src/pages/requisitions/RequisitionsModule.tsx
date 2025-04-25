@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import RequisitionsTable from 'src/components/requisitions-table/RequisitionsTable'
 import MainLayout from 'src/HOCs/MainLayout/MainLayout'
 
