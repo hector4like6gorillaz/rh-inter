@@ -21,7 +21,6 @@ const AddCandidateToRequisition = () => {
 
   return (
     <MainLayout
-      showLeftPanel={false}
       tabTitle='Inter - Añadir candidatos a requisición'
       titleNavBar={`Añadir candidatos a requisición: ${puesto}`}
     >

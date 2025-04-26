@@ -1,4 +1,3 @@
-import { Tooltip } from 'antd'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
@@ -8,7 +7,6 @@ import { formatTimestamp } from 'src/utilities/timestamp-to-date.utilities'
 import { notifyError } from 'src/utilities/toastify.utilities'
 import { normalizeText } from 'src/utilities/words-utilities'
 import { timer, Subscription } from 'rxjs'
-import { EyeIcon } from '@heroicons/react/24/outline'
 
 const useReqisitions = () => {
   //const hasFetched = useRef(false)
@@ -67,43 +65,14 @@ const useReqisitions = () => {
 
       searched = [...new Set(searched)]
       setrequisitionsCopyElements(searched)
-      console.log(searched)
     }
   }
-
+  const navigateToRequisition = ({ record }: { record: IRequisitionKhor }) => {
+    navigate('/candidates', {
+      state: { requisition: record, idOferta: record.idOferta },
+    })
+  }
   const columns = [
-    {
-      title: 'Ver candidatos',
-      key: 'unitOfMeasurement',
-      render: (_: any, record: IRequisitionKhor) => (
-        <>
-          {(() => {
-            return (
-              <div style={{ display: 'flex', justifyContent: 'center', columnGap: '1rem' }}>
-                <Tooltip title='Editar producto'>
-                  <EyeIcon
-                    style={{
-                      width: '1.5rem',
-                      height: '1.5rem',
-                      stroke: '#039ecc',
-                      fill: 'white',
-                      cursor: 'pointer',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      console.log(record)
-                      navigate('/candidates', {
-                        state: { requisition: record, idOferta: record.idOferta },
-                      })
-                    }}
-                  />
-                </Tooltip>
-              </div>
-            )
-          })()}
-        </>
-      ),
-    },
     {
       title: 'Puesto',
       dataIndex: 'puestoACubrir',
@@ -180,6 +149,7 @@ const useReqisitions = () => {
     getNextPrevPageInventary,
     handleSearch,
     filterSearch,
+    navigateToRequisition,
   }
 }
 

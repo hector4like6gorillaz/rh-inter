@@ -5,7 +5,14 @@ import useReqisitions from 'src/hooks/useReqisitions'
 import { XCircleIcon } from '@heroicons/react/24/outline'
 
 const RequisitionsTable = () => {
-  const { search, columns, requisitionsCopyElements, handleSearch, filterSearch } = useReqisitions()
+  const {
+    search,
+    columns,
+    requisitionsCopyElements,
+    handleSearch,
+    filterSearch,
+    navigateToRequisition,
+  } = useReqisitions()
   return (
     <div className={`${style['requisitions-div-container']}`}>
       <Search
@@ -33,8 +40,15 @@ const RequisitionsTable = () => {
           dataSource={requisitionsCopyElements}
           columns={columns}
           loading={false}
-        //  scroll={{ x: 'max-content' }}
           rowKey={'idOferta'}
+          rowClassName={() => style['clickable-row']}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                navigateToRequisition({ record })
+              },
+            }
+          }}
           pagination={{
             showSizeChanger: false,
           }}

@@ -19,7 +19,6 @@ const CuestionarieModule = () => {
 
   return (
     <MainLayout
-      showLeftPanel={false}
       tabTitle={`Inter - Cuestionario de ${puesto}`}
       titleNavBar={`Cuestionario de ${puesto}`}
     >

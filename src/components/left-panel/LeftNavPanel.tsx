@@ -9,8 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import P from '../paragraph/P'
 import logo from 'src/assets/logo.png'
-import { useState } from 'react'
-
+import useNavBar from 'src/hooks/useNavBar'
 
 const navOptions = [
   {
@@ -25,7 +24,7 @@ const navOptions = [
 const LeftNavPanel = () => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const [contractBar, setContractBar] = useState(false)
+  const { barState, handleCollapseBar } = useNavBar()
 
   const getPathSelected = (title: string) => {
     let filterPath = pathname.replaceAll('-', ' ')
@@ -39,19 +38,13 @@ const LeftNavPanel = () => {
 
   return (
     <div
-      className={`${style['left-container-div']} ${contractBar ? style['min-widh-true'] : style['min-widh-false']}`}
+      className={`${style['left-container-div']} ${barState ? style['min-widh-true'] : style['min-widh-false']}`}
     >
       <div className={`${style['div-logo-container']}`}>
-        <img
-          src={logo}
-          className={`${style['logo-props']}`}
-          onClick={() => setContractBar(!contractBar)}
-        />
-        {!contractBar && <P>Inter</P>}
+        <img src={logo} className={`${style['logo-props']}`} onClick={handleCollapseBar} />
+        {!barState && <P>Inter</P>}
       </div>
-      <div
-        className={`${style['div-flex-column-options']} ${contractBar && style['aling-center']}`}
-      >
+      <div className={`${style['div-flex-column-options']} ${barState && style['aling-center']}`}>
         {navOptions.map((item, index) => {
           const { icon, uri, title, compare } = item
           const isSelected = getPathSelected(compare)
@@ -59,7 +52,7 @@ const LeftNavPanel = () => {
           return (
             <Fragment key={index}>
               <SelectOption
-                showLabels={!contractBar}
+                showLabels={!barState}
                 selected={isSelected}
                 Icon={icon}
                 label={title}
@@ -76,7 +69,7 @@ const LeftNavPanel = () => {
         <div className={`${style['logo-props']}`}>
           <ArrowRightStartOnRectangleIcon className={`${style['logo-props']}`} />
         </div>
-        {!contractBar && <P>Log out</P>}
+        {!barState && <P>Log out</P>}
       </div>
     </div>
   )
