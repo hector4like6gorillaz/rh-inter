@@ -2,92 +2,106 @@ import { DocumentMagnifyingGlassIcon, EyeIcon } from '@heroicons/react/24/outlin
 import { Tooltip } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { candidatesData } from 'src/constants/canddates-constants'
-import { IRequisition } from 'src/interfaces/requisitions-interfaces'
-import { notifyError } from 'src/utilities/toastify.utilities'
+import { IRequisitionData, IRequisitionKhor } from 'src/interfaces/requisitions-interfaces'
+
+import { catchError, defer, finalize, forkJoin, from, throwError } from 'rxjs'
+import { notify, notifyError, notifyWarning } from 'src/utilities/toastify.utilities'
+import {
+  getRequisitionByIdWithCandidates,
+  postRequisition,
+} from 'src/services/requisitions/requisitions.service'
 
 const useCandidates = () => {
   const location = useLocation()
-  const { requisition } = location.state || {}
-  const fullDescription = `Gerente de Contabilidad
+  const { requisition, idOferta } = location.state || {}
 
-Interprotección busca un Gerente de Contabilidad altamente motivado y experimentado para supervisar y gestionar todos los aspectos de la contabilidad financiera. El candidato ideal tendrá un sólido conocimiento de los principios contables, las Normas de Información Financiera (NIF) y las mejores prácticas de la industria. El puesto reporta al Director Financiero y juega un papel crucial en el aseguramiento de la precisión, integridad y oportunidad de los reportes financieros de la compañía.
-
-Responsabilidades:
-
-Preparación, registro y control del Flujo de Caja.
-
-Administración y control de las cuentas bancarias.
-
-Identificación, registro, administración y control de contratos con clientes y proveedores.
-
-Preparación y control del presupuesto financiero.
-
-Generación de controles que garanticen la gestión ordenada de las operaciones de las sociedades administradas.
-
-Identificación, registro y control de las operaciones intercompañías.
-
-Supervisión y coordinación de la generación de información de estados financieros de empresas asociadas.
-
-Administración, seguimiento y control de los pasivos financieros.
-
-Generación de los estados financieros y principales cédulas analíticas, de forma mensual y anual relativas a los clientes, proveedores y acreedores.
-
-Aseguramiento de la aplicación de las Normas de Información Financiera adoptadas por la administración.
-
-Habilidades y cualificaciones:
-
-Licenciatura en Contabilidad o área afín.
-
-Sólido conocimiento de los principios contables y las NIF.
-
-Experiencia comprobable en un puesto similar (mínimo 5 años).
-
-Dominio de software de contabilidad y hojas de cálculo.
-
-Fuertes habilidades analíticas y de resolución de problemas.
-
-Excelentes habilidades de comunicación oral y escrita.
-
-Capacidad para trabajar de forma independiente y como parte de un equipo.`
-  const [requisitionData, setrequisitionData] = useState<IRequisition | null>(null)
+  const [requisitionData, setrequisitionData] = useState<IRequisitionKhor | null | false>(null)
   const hasFetched = useRef(false)
   const navigate = useNavigate()
-  const [candidatesElements, setCandidatesElements] = useState<any[]>(candidatesData)
-  const [loading, setloading] = useState(false)
+  const [candidatesElements, setCandidatesElements] = useState<any[]>([])
 
-  const [pageCurrent, setpageCurrent] = useState(1)
+  const [loading, setloading] = useState(false)
+  const [loadinInitRequisition, setloadinInitRequisition] = useState(false)
+
   const [search, setsearch] = useState('')
+  console.log(search)
   const [resumenCandidato, setresumenCandidato] = useState('')
+  const [candidateNameSelected, setcandidateNameSelected] = useState('')
   const [showModal, setshowModal] = useState(false)
 
+  const [fullRequisition, setfullRequisition] = useState<IRequisitionData | null>(null)
+
   const closeModal = () => setshowModal(false)
-  const getNextPrevPageInventary = async ({
-    page,
-    save = false,
-  }: {
-    page: number
-    save?: boolean
-  }) => {
-    try {
-      setloading(true)
-      setpageCurrent(page)
-      //const dat = await getPokemonById({ page, search }) // esperar la promesa
-      const dat = 2
-      return dat
-    } catch (e: any) {
-      if (e.status === 401) {
-        notifyError('La sesión ha caducado. Iniciar sesión nuevamente.')
-        //cleanToken()
-      } else {
-        notifyError('Ha ocurrido un error al cargar la lista de pacientes. Contactar con soporte.')
-      }
-      console.log(e)
-      throw e // lanzar el error para que rxjs pueda capturarlo
-    } finally {
-      setloading(false)
-    }
+
+  const getRequisitionByIdWithCandidatesService = () => {
+    setloading(true)
+    return defer(() =>
+      getRequisitionByIdWithCandidates({ idOferta }).then((dat) => {
+        return dat
+      }),
+    ).pipe(
+      finalize(() => setloading(false)),
+      catchError((e) => {
+        return throwError(() => e)
+      }),
+    )
   }
+
+  const handleGetRequisitionByIdWithCandidatesService = () => {
+    getRequisitionByIdWithCandidatesService().subscribe({
+      next: (requisitionData) => {
+        setrequisitionData(requisition)
+        setfullRequisition(requisitionData)
+        setCandidatesElements(
+          requisitionData.candidatosListFullData.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+              pdf: item.cvPublicURL,
+              cuestionario: 'sin resultado',
+              psicometrico: 'sin resultado',
+              summary: item.summary,
+            }
+          }),
+        )
+        setloading(false)
+      },
+      error: (error) => console.error('Error al refrescar directorio:', error),
+    })
+  }
+
+  const postRequisitionService = () => {
+    setloadinInitRequisition(true)
+    return defer(() =>
+      postRequisition({
+        body: {
+          funciones: requisition.funcionesPrincipales,
+          idOferta,
+          puesto: requisition.puestoACubrir,
+        },
+      }).then((dat) => {
+        return dat
+      }),
+    ).pipe(
+      finalize(() => setloading(false)),
+      catchError((e) => {
+        return throwError(() => e)
+      }),
+    )
+  }
+
+  const handleRequisition = () => {
+    postRequisitionService().subscribe({
+      next: () => {
+        //navigate(-1)
+        setloadinInitRequisition(false)
+        notify(`Requisición para '${requisition.puestoACubrir}' creada con exito. Cargando datos`)
+        handleGetRequisitionByIdWithCandidatesService()
+      },
+      error: (error) => console.error('Error al refrescar tags:', error),
+    })
+  }
+
   const handleSearch = (search: string) => {
     setsearch(search)
   }
@@ -155,9 +169,8 @@ Capacidad para trabajar de forma independiente y como parte de un equipo.`
                     onClick={(e) => {
                       e.stopPropagation()
                       setshowModal(true)
-                      setresumenCandidato(
-                        'El candidato tiene experiencia trabajando en tal y tales partes asi como tambien aqui y haya para poder ejercer el puesto que esta solicitando en esta empresa.',
-                      )
+                      setresumenCandidato(record.summary)
+                      setcandidateNameSelected(record.name)
                     }}
                   />
                 </Tooltip>
@@ -168,6 +181,50 @@ Capacidad para trabajar de forma independiente y como parte de un equipo.`
       ),
     },
   ]
+
+  useEffect(() => {
+    if (hasFetched.current) return
+
+    const subscription = forkJoin({
+      requisitionData: from(getRequisitionByIdWithCandidatesService()),
+    }).subscribe({
+      next: ({ requisitionData }) => {
+        setfullRequisition(requisitionData)
+        setloading(false)
+        setCandidatesElements(
+          requisitionData.candidatosListFullData.map((item) => {
+            return {
+              id: item.id,
+              name: item.name,
+              pdf: item.cvPublicURL,
+              cuestionario: 'sin resultado',
+              psicometrico: 'sin resultado',
+              summary: item.summary,
+            }
+          }),
+        )
+        hasFetched.current = true
+      },
+      error: (error) => {
+        console.error('Error en la llamada:', error)
+        switch (error.status) {
+          case 401:
+            notifyError('La sesión ha caducado. Iniciar sesión nuevamente.')
+            break
+          case 404:
+            notifyWarning(
+              `${error.response.data.message} No se encontraron coincidencias para ${requisition.puestoACubrir}`,
+            )
+            setrequisitionData(false)
+            break
+          default:
+            break
+        }
+      },
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     if (requisition !== undefined && requisition !== null) {
@@ -183,16 +240,18 @@ Capacidad para trabajar de forma independiente y como parte de un equipo.`
     columns,
     candidatesElements,
     loading,
-    pageCurrent,
+    fullRequisition,
     requisitionData,
     resumenCandidato,
     showModal,
-    fullDescription,
+    candidateNameSelected,
+    loadinInitRequisition,
     //local functions
-    getNextPrevPageInventary,
+
     handleSearch,
     navigate,
     closeModal,
+    handleRequisition,
   }
 }
 

@@ -11,7 +11,6 @@ const PsicometricModule = () => {
   const [form] = Form.useForm()
   return (
     <MainLayout
-      showLeftPanel={false}
       titleNavBar='Enviar Psicometrico a candidatos'
       tabTitle='Inter - Enviar Psicometrico'
     >

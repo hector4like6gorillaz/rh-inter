@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
 import { useLocation } from 'react-router-dom'
-import P from 'src/components/paragraph/P'
+
 import MainLayout from 'src/HOCs/MainLayout/MainLayout'
+import ReactMarkdown from 'react-markdown'
 
 const FullDescriptionModule = () => {
   const location = useLocation()
@@ -13,9 +13,7 @@ const FullDescriptionModule = () => {
       tabTitle='Inter - Descripción completa'
       titleNavBar='Descripción completa del puesto'
     >
-      <Fragment>
-        <P size='big'>{fullDescription}</P>
-      </Fragment>
+      <ReactMarkdown>{fullDescription}</ReactMarkdown>
     </MainLayout>
   )
 }

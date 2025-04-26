@@ -1,26 +1,25 @@
-import { Tooltip } from 'antd'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import P from 'src/components/paragraph/P'
 import { initRequisitions } from 'src/constants/requisitions-constants'
-import { IRequisition } from 'src/interfaces/requisitions-interfaces'
+import { IRequisitionKhor } from 'src/interfaces/requisitions-interfaces'
 import { formatTimestamp } from 'src/utilities/timestamp-to-date.utilities'
 import { notifyError } from 'src/utilities/toastify.utilities'
 import { normalizeText } from 'src/utilities/words-utilities'
 import { timer, Subscription } from 'rxjs'
-import { EyeIcon } from '@heroicons/react/24/outline'
 
 const useReqisitions = () => {
-  const hasFetched = useRef(false)
+  //const hasFetched = useRef(false)
   const navigate = useNavigate()
   const [requisitionstElements, setRequisitionsElements] =
-    useState<IRequisition[]>(initRequisitions)
+    useState<IRequisitionKhor[]>(initRequisitions)
   const [requisitionsCopyElements, setrequisitionsCopyElements] =
-    useState<IRequisition[]>(initRequisitions)
+    useState<IRequisitionKhor[]>(initRequisitions)
   const [loading, setloading] = useState(false)
   const [search, setsearch] = useState('')
 
   const getNextPrevPageInventary = async ({ save = false }: { save?: boolean }) => {
+    console.log(save)
     try {
       setloading(true)
 
@@ -46,7 +45,7 @@ const useReqisitions = () => {
   }
 
   const filterSearch = () => {
-    let searched: IRequisition[] = []
+    let searched: IRequisitionKhor[] = []
 
     if (search !== '' && requisitionstElements.length !== 0) {
       const normalizedSearch = normalizeText(search)
@@ -66,40 +65,14 @@ const useReqisitions = () => {
 
       searched = [...new Set(searched)]
       setrequisitionsCopyElements(searched)
-      console.log(searched)
     }
   }
-
+  const navigateToRequisition = ({ record }: { record: IRequisitionKhor }) => {
+    navigate('/candidates', {
+      state: { requisition: record, idOferta: record.idOferta },
+    })
+  }
   const columns = [
-    {
-      title: 'Ver candidatos',
-      key: 'unitOfMeasurement',
-      render: (_: any, record: any) => (
-        <>
-          {(() => {
-            return (
-              <div style={{ display: 'flex', justifyContent: 'center', columnGap: '1rem' }}>
-                <Tooltip title='Editar producto'>
-                  <EyeIcon
-                    style={{
-                      width: '1.5rem',
-                      height: '1.5rem',
-                      stroke: '#039ecc',
-                      fill: 'white',
-                      cursor: 'pointer',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigate('/candidates', { state: { requisition: record } })
-                    }}
-                  />
-                </Tooltip>
-              </div>
-            )
-          })()}
-        </>
-      ),
-    },
     {
       title: 'Puesto',
       dataIndex: 'puestoACubrir',
@@ -129,7 +102,7 @@ const useReqisitions = () => {
       title: 'Fecha',
       dataIndex: 'fechaCreacion',
 
-      render: (_: any, record: IRequisition) => (
+      render: (_: any, record: IRequisitionKhor) => (
         <>
           {(() => {
             return (
@@ -142,6 +115,11 @@ const useReqisitions = () => {
       ),
     },
   ]
+  useEffect(() => {
+    setRequisitionsElements(initRequisitions)
+
+    return () => {}
+  }, [])
 
   useEffect(() => {
     let subscription: Subscription
@@ -171,6 +149,7 @@ const useReqisitions = () => {
     getNextPrevPageInventary,
     handleSearch,
     filterSearch,
+    navigateToRequisition,
   }
 }
 
