@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom'
 
 import { ICandidate } from 'src/interfaces/candidates-interface'
 import { IExam } from 'src/interfaces/requisitions-interfaces'
-import { postSendEmailCuestionarie } from 'src/services/candidatos/cadidatos.services'
+import { postSendEmailCuestionarie } from 'src/services/candidatos/cadidatos.service'
 import { catchError, defer, throwError } from 'rxjs'
 import { notify, notifyError } from 'src/utilities/toastify.utilities'
 
@@ -13,9 +13,7 @@ type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'
 const useCuestionario = () => {
   const location = useLocation()
   const { exam, candidates, idOferta, puesto } = location.state || {}
-  console.log(puesto)
 
-  //console.log(exam, candidates, idOferta, puesto)
   const [loading, setloading] = useState(false)
   const [cuestionaire, setcuestionaire] = useState<IExam[] | null>(null)
   const [candidatesNameEmailList, setcandidatesNameEmailList] = useState<ICandidate[] | null>(null)
