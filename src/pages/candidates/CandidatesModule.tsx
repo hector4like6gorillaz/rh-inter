@@ -23,6 +23,7 @@ const CandidatesModule = () => {
     navigate,
     handleRequisition,
   } = useCandidates()
+
   return (
     <MainLayout
       tabTitle='Inter - Candidatos'
@@ -88,7 +89,19 @@ const CandidatesModule = () => {
                 >
                   Cuestionario
                 </Button>
-                <Button size='large' type='primary' onClick={() => navigate('/psicometric')}>
+                <Button
+                  size='large'
+                  type='primary'
+                  onClick={() =>
+                    navigate('/psicometric', {
+                      state: {
+                        idOferta: fullRequisition?.idOferta,
+                        puesto: requisitionData.puestoACubrir,
+                        candidates: fullRequisition?.candidatosListFullData,
+                      },
+                    })
+                  }
+                >
                   Psicométrico
                 </Button>
               </div>

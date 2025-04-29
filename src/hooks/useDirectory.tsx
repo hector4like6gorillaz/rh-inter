@@ -413,7 +413,10 @@ const useDirectory = () => {
         setloading(false)
         hasFetched.current = true
       },
-      error: (error) => console.error('Error en la llamada:', error),
+      error: (error) => {
+        console.error('Error en la llamada:', error)
+        setloading(false)
+      },
     })
 
     return () => subscription.unsubscribe()

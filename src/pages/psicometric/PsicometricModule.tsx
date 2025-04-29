@@ -1,28 +1,41 @@
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
-import { Button, Form, Table } from 'antd'
+import { Button, Form, Spin, Table } from 'antd'
 import Input from 'antd/es/input/Input'
-import { Fragment } from 'react'
 import MainLayout from 'src/HOCs/MainLayout/MainLayout'
 import usePsicometric from 'src/hooks/usePsicometric'
 
 const PsicometricModule = () => {
-  const { columns, dataSource, rowSelection } = usePsicometric()
+  const {
+    columns,
+    rowSelection,
+    candidatesNameEmailList,
+    puesto,
+    code,
+    loading,
+    disabledButton,
+    setcode,
+    handlePostSendEmailService,
+  } = usePsicometric()
+  {
+  }
 
   const [form] = Form.useForm()
   return (
     <MainLayout
-      titleNavBar='Enviar Psicometrico a candidatos'
+      titleNavBar={`Enviar Psicometrico a candidatos. Puesto: ${puesto}`}
       tabTitle='Inter - Enviar Psicometrico'
     >
-      <Fragment>
+      <Spin spinning={loading}>
         <Form layout={'vertical'} form={form}>
           <Form.Item
             style={{ fontSize: '2rem' }}
             label='Ingresa el codigo del psicometrico'
             name={'name'}
-            rules={[{ required: true, message: 'Ingresa un correo de usuario valido' }]}
+            rules={[{ required: true, message: 'Ingresa un codigo de psicometrico valido' }]}
           >
             <Input
+              value={code}
+              onChange={(e) => setcode(e.target.value)}
               size='large'
               placeholder='xxxx xxxx xxxx'
               onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
@@ -31,9 +44,8 @@ const PsicometricModule = () => {
           <div style={{ width: '100%', overflow: 'auto' }}>
             <Table
               rowSelection={rowSelection}
-              dataSource={dataSource}
+              dataSource={candidatesNameEmailList ?? []}
               columns={columns}
-              loading={false}
               scroll={{ x: 'max-content' }}
               rowKey={'email'}
               pagination={{
@@ -44,7 +56,8 @@ const PsicometricModule = () => {
           <br />
           <Form.Item style={{ width: '100%', display: 'flex', justifyContent: 'end' }}>
             <Button
-              onClick={() => null}
+              disabled={disabledButton()}
+              onClick={handlePostSendEmailService}
               size='large'
               type='primary'
               htmlType='submit'
@@ -55,7 +68,7 @@ const PsicometricModule = () => {
             </Button>
           </Form.Item>
         </Form>
-      </Fragment>
+      </Spin>
     </MainLayout>
   )
 }

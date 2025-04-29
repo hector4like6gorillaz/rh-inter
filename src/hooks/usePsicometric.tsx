@@ -1,46 +1,89 @@
 import { useEffect, useState } from 'react'
 import { Tooltip, type TableColumnsType, type TableProps } from 'antd'
 import P from 'src/components/paragraph/P'
+import { useLocation } from 'react-router-dom'
+import { catchError, defer, throwError } from 'rxjs'
+import { postSendPsicometric } from 'src/services/candidatos/cadidatos.service'
+import { ICandidate } from 'src/interfaces/candidates-interface'
+import { notify, notifyError } from 'src/utilities/toastify.utilities'
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection']
-interface DataType {
-  key: React.Key
-  name: string
-  email: string
-  puesto: string
-  idOferta: number
-}
 
 const usePsicometric = () => {
+  const location = useLocation()
+  const { candidates, puesto } = location.state || {}
   const [loading, setloading] = useState(false)
+  const [code, setcode] = useState('')
+  const [candidatesNameEmailList, setcandidatesNameEmailList] = useState<ICandidate[] | null>(null)
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
+  const postSendEmailService = () => {
+    setloading(true)
+    return defer(() =>
+      postSendPsicometric({
+        vacante: puesto,
+        codigoExamen: '12345',
+        candidatos: candidatesNameEmailList!
+          .filter((item) => selectedRowKeys.includes(item.email))
+          .map((item) => ({
+            nombre: item.name,
+            email: item.email,
+          })),
+      }).then((dat) => {
+        return dat
+      }),
+    ).pipe(
+      catchError((e) => {
+        return throwError(() => e)
+      }),
+    )
+  }
+
+  const handlePostSendEmailService = () => {
+    postSendEmailService().subscribe({
+      next: () => {
+        setloading(false)
+        notify('Correo(s) enviado(s) exitosamente.')
+      },
+      error: (error) => {
+        notifyError('Error al intentar enviar correos, reintentar o contactar con soporte.')
+        console.error('Error al refrescar directorio:', error)
+        setloading(false)
+      },
+    })
+  }
+
+  const disabledButton = () => {
+    let disabled = true
+    if (selectedRowKeys.length !== 0 && code !== '') disabled = false
+
+    return disabled
+  }
+
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    //console.log('selectedRowKeys changed: ', newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys)
   }
 
-  const rowSelection: TableRowSelection<DataType> = {
+  const rowSelection: TableRowSelection<ICandidate> = {
     selectedRowKeys,
     onChange: onSelectChange,
   }
 
   const hasSelected = selectedRowKeys.length > 0
 
-  const columns: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<ICandidate> = [
     { title: 'Nombre', dataIndex: 'name' },
     { title: 'Email', dataIndex: 'email' },
-    { title: 'Puesto', dataIndex: 'puesto' },
     {
-      title: 'ID Oferta',
-      dataIndex: 'idOferta',
-      render: (_: any, record: any) => (
+      title: 'Puesto actual',
+      dataIndex: 'puesto',
+      render: (_: any, record: ICandidate) => (
         <>
           {(() => {
             return (
-              <div style={{ display: 'flex', columnGap: '1rem', justifyContent: 'center' }}>
+              <div>
                 <Tooltip title='Id de oferta'>
-                  <P size='big'>{record.idOferta} </P>
+                  <P>{record.currentRole} </P>
                 </Tooltip>
               </div>
             )
@@ -49,27 +92,29 @@ const usePsicometric = () => {
       ),
     },
   ]
-  const dataSource = Array.from<DataType>({ length: 6 }).map<DataType>((_, i) => ({
-    key: i,
-    name: `Edward King ${i}`,
-    email: `balan.inter.${i}@digital.mx`,
-    puesto: `Gerente de contabilidad`,
-    idOferta: 4392,
-  }))
 
   useEffect(() => {
-    setloading(false)
+    if (candidates !== null) {
+      setcandidatesNameEmailList(candidates)
+    }
+
+    return () => {}
   }, [])
 
   return {
     //local constants
     loading,
     columns,
-    dataSource,
     hasSelected,
     selectedRowKeys,
+    candidatesNameEmailList,
+    puesto,
+    code,
     //local functions
     rowSelection,
+    disabledButton,
+    setcode,
+    handlePostSendEmailService,
   }
 }
 
